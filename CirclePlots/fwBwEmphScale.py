@@ -8,10 +8,10 @@ from scipy.optimize import curve_fit
 
 momLog = True
 # momLog = False
-# evtLog = True
-evtLog = False
-electronOnly = True
-# electronOnly = False
+evtLog = True
+# evtLog = False
+# electronOnly = True
+electronOnly = False
 # protonOnly = True
 protonOnly = False
 
@@ -289,9 +289,19 @@ if momLog:
         ax.bar(angleDisp,momWidthLog,width=angDispWidth,bottom=momMinLog,color=cmapDisp(alphas))
     ax.set_rmin(0)
     ax.set_rmax(math.ceil(max(momMaxLog)))
-    ax.text(2.5, math.ceil(max(momMaxLog))+1, 'Linear\nAngle', fontsize=12)
-    ax.text(3.75, math.ceil(max(momMaxLog))+1, 'Log\nAngle', fontsize=12)
-    ax.text(0.08, math.ceil(max(momMaxLog))*(1.01), 'log$_{10}$E\'\n(log(GeV))', fontsize=12)
+    if protonOnly:
+        ax.set_rticks(np.linspace(0,math.ceil(max(momMaxLog)),2*math.ceil(max(momMaxLog)), endpoint=False))  # Less radial ticks
+        ax.set_rmin(min(momMaxLog)-0.2)
+        ax.set_rmax(max(momMaxLog)+0.2)
+        ax.text(0.08, (max(momMaxLog)+0.2)*(1.01), 'log$_{10}$E\'\n(log(GeV))', fontsize=12)
+        ax.text(2.5, (max(momMaxLog)+0.2)*(1.15), 'Linear\nAngle', fontsize=12)
+        ax.text(3.75, (max(momMaxLog)+0.2)*(1.15), 'Log\nAngle', fontsize=12)
+    else:
+        ax.text(0.08, math.ceil(max(momMaxLog))*(1.01), 'log$_{10}$E\'\n(log(GeV))', fontsize=12)
+        ax.text(2.5, math.ceil(max(momMaxLog))+1, 'Linear\nAngle', fontsize=12)
+        ax.text(3.75, math.ceil(max(momMaxLog))+1, 'Log\nAngle', fontsize=12)
+
+
 else:
     ax.set_rmax(math.ceil(max(momMax)))
     # ax.set_rticks(np.linspace(0,math.ceil(max(momMax)),math.ceil(max(momMax))/50, endpoint=False))  # Less radial ticks
