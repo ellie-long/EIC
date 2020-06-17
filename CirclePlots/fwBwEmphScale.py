@@ -6,17 +6,23 @@ import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 from scipy.optimize import curve_fit
 
-# momLog = True
+# Initilization of Flags
+# ---- DO NOT TOUCH THESE ------
 momLog = False
-
-evtLog = True
-# evtLog = False
-
-electronOnly = True
-# electronOnly = False
-
-# protonOnly = True
+evtLog = False
+electronOnly = False
 protonOnly = False
+visbilityBar = False
+# -------------------------------
+
+
+# You can turn on this flags as desired by uncommenting them:
+momLog = True
+evtLog = True
+# electronOnly = True
+# protonOnly = True
+visbilityBar = True
+
 
 dataFilename = './data/elastic_theta_momentum.txt'
 # dataFilename = './data/5by41-electron.dat'
@@ -278,16 +284,25 @@ for i in range(0,len(numEvts)):
 
 
 cmapDisp = cm.get_cmap('viridis')
+# visMap = cm.get_cmap('Greys')
+visMap = cm.get_cmap('viridis')
 fig = plt.figure()
 ax = plt.subplot(111, projection='polar')
-
+visAlpha = 0.1
 if momLog:
     ax.set_rmax(math.ceil(max(momMaxLog)))
     ax.set_rticks(np.linspace(0,math.ceil(max(momMaxLog)),math.ceil(max(momMaxLog)), endpoint=False))  # Less radial ticks
+    momAdjSize = 0.1
     if evtLog:
+        if visbilityBar:
+            ax.bar(angleDisp,[x+2*momAdjSize for x in momWidthLog],width=angDispWidth,bottom=[x-momAdjSize for x in momMinLog],color=visMap(alphasLog),alpha=visAlpha)
+            ax.bar(angle,[x+2*momAdjSize for x in momWidthLog],width=angWidth,bottom=[x-momAdjSize for x in momMinLog],color=visMap(alphasLog),alpha=visAlpha)
         ax.bar(angle,momWidthLog,width=angWidth,bottom=momMinLog,color=cmapDisp(alphasLog))
         ax.bar(angleDisp,momWidthLog,width=angDispWidth,bottom=momMinLog,color=cmapDisp(alphasLog))
     else:
+        if visbilityBar:
+            ax.bar(angle,[2*momAdjSize+x for x in momWidthLog],width=angWidth,bottom=[x-momAdjSize for x in momMinLog],color=visMap(alphas),alpha=visAlpha)
+            ax.bar(angleDisp,[2*momAdjSize+x for x in momWidthLog],width=angDispWidth,bottom=[x-momAdjSize for x in momMinLog],color=visMap(alphas),alpha=visAlpha)
         ax.bar(angle,momWidthLog,width=angWidth,bottom=momMinLog,color=cmapDisp(alphas))
         ax.bar(angleDisp,momWidthLog,width=angDispWidth,bottom=momMinLog,color=cmapDisp(alphas))
     ax.set_rmin(0)
@@ -303,15 +318,20 @@ if momLog:
         ax.text(0.08, math.ceil(max(momMaxLog))*(1.01), 'log$_{10}$E\'\n(log(GeV))', fontsize=12)
         ax.text(2.5, math.ceil(max(momMaxLog))+1, 'Linear\nAngle', fontsize=12)
         ax.text(3.75, math.ceil(max(momMaxLog))+1, 'Log\nAngle', fontsize=12)
-
-
 else:
     ax.set_rmax(math.ceil(max(momMax)))
-    # ax.set_rticks(np.linspace(0,math.ceil(max(momMax)),math.ceil(max(momMax))/50, endpoint=False))  # Less radial ticks
+    momAdjSize = 10
+    # ax.set_rticks(np.linspace(0,math.ceil(max(momMax))+20,int(math.ceil(max(momMax))/50), endpoint=False))  # Less radial ticks
     if evtLog:
+        if visbilityBar:
+            ax.bar(angle,[2*momAdjSize+x for x in momWidth],width=angWidth,bottom=[x-momAdjSize for x in momMin],color=visMap(alphasLog),alpha=visAlpha)
+            ax.bar(angleDisp,[2*momAdjSize+x for x in momWidth],width=angDispWidth,bottom=[x - momAdjSize for x in momMin],color=visMap(alphasLog),alpha=visAlpha)
         ax.bar(angle,momWidth,width=angWidth,bottom=momMin,color=cmapDisp(alphasLog))
         ax.bar(angleDisp,momWidth,width=angDispWidth,bottom=momMin,color=cmapDisp(alphasLog))
     else:
+        if visbilityBar:
+            ax.bar(angle,[2*momAdjSize+x for x in momWidth],width=angWidth,bottom=[x-momAdjSize for x in momMin],color=visMap(alphas),alpha=visAlpha)
+            ax.bar(angleDisp,[2*momAdjSize+x for x in momWidth],width=angDispWidth,bottom=[x-momAdjSize for x in momMin],color=visMap(alphas),alpha=visAlpha)
         ax.bar(angle,momWidth,width=angWidth,bottom=momMin,color=cmapDisp(alphas))
         ax.bar(angleDisp,momWidth,width=angDispWidth,bottom=momMin,color=cmapDisp(alphas))
     ax.set_rmin(0)
@@ -331,20 +351,27 @@ ax.set_rlabel_position(0)  # Move radial labels away from plotted line
 
 ax.set_title("Elastic e-p Scattering", va='bottom')
 
-ax3 = fig.add_axes([0.9, 0.1, 0.03, 0.8])
-if evtLog:
-    ax3.text(-10, maxEvtLog*(1+0.02), '10^n Events', fontsize=12)
-    cNorm = mpl.colors.Normalize(vmin=minEvtLog, vmax=maxEvtLog)
+
+
+
+# if visbilityBar:
+if False:
+    ax3 = fig.add_axes([0.85, 0.1, 0.03, 0.8])
+    ax4 = fig.add_axes([0.9, 0.1, 0.03, 0.8])
+    if evtLog:
+        ax3.text(-10, maxEvtLog*(1+0.02), '10^n Events', fontsize=12)
+        cNorm = mpl.colors.Normalize(vmin=minEvtLog, vmax=maxEvtLog)
+    else:
+        ax3.text(-10, maxEvt*(1+0.05), '# Events', fontsize=12)
+        cNorm = mpl.colors.Normalize(vmin=minEvt, vmax=maxEvt)
+    cb2 = mpl.colorbar.ColorbarBase(ax4, norm=cNorm, cmap="Greys")
 else:
-    ax3.text(-10, maxEvt*(1+0.05), '# Events', fontsize=12)
-    cNorm = mpl.colors.Normalize(vmin=minEvt, vmax=maxEvt)
-cb1 = mpl.colorbar.ColorbarBase(ax3, norm=cNorm)
+    ax3 = fig.add_axes([0.9, 0.1, 0.03, 0.8])
+    if evtLog:
+        ax3.text(-10, maxEvtLog*(1+0.02), '10^n Events', fontsize=12)
+        cNorm = mpl.colors.Normalize(vmin=minEvtLog, vmax=maxEvtLog)
+    else:
+        ax3.text(-10, maxEvt*(1+0.05), '# Events', fontsize=12)
+        cNorm = mpl.colors.Normalize(vmin=minEvt, vmax=maxEvt)
+cb1 = mpl.colorbar.ColorbarBase(ax3, norm=cNorm, cmap="viridis")
 plt.show()
-
-
-
-# plt.xticks(np.arange(0, 360, 45))
-# plt.xticklabels(['$90^{-1}~^{\deg}$', '$90^{-1/2}~^{\deg}$', '$90^{0}~^{\deg}$', '$90^{1/2}~^{\deg}$', '$90^{1}~^{\deg}$', '', 'E', ''])
-# plt.ylim(1E-1,500)
-# plt.yscale('log')
-# plt.polar(th, r, 'b.')
