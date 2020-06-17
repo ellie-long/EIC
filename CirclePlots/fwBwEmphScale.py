@@ -6,12 +6,15 @@ import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 from scipy.optimize import curve_fit
 
-momLog = True
-# momLog = False
+# momLog = True
+momLog = False
+
 evtLog = True
 # evtLog = False
-# electronOnly = True
-electronOnly = False
+
+electronOnly = True
+# electronOnly = False
+
 # protonOnly = True
 protonOnly = False
 
